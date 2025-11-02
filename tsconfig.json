@@ -19,6 +19,12 @@
 			}
 		],
 		"paths": {
+			"@components/*": ["./components/*"],
+			"@hooks/*": ["./hooks/*"],
+			"@lib/*": ["./lib/*"],
+			"@middlewares/*": ["./middlewares/*"],
+			"@services/*": ["./services/*"],
+			"@types/*": ["./types/*"],
 			"@/*": ["./*"]
 		}
 	},

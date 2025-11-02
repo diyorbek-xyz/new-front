@@ -1,15 +1,19 @@
 'use client';
 
 import Link from 'next/link';
-import { Edit, UserCircle } from 'lucide-react';
+import { Edit, LogOut, UserCircle } from 'lucide-react';
 
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
 import { useIsMobile } from '@/hooks/use-mobile';
+import account from '@/services/account';
 
 export default function Navbar() {
 	const isMobile = useIsMobile();
+	function logOut() {
+		account.logout().then((res) => console.log(res));
+	}
 	return (
-		<header className='bg-background/75 sticky top-0 z-20 h-(--navbar-height) flex items-center py-2 backdrop-blur-3xl'>
+		<header className='bg-background/75 sticky top-0 z-20 flex h-(--navbar-height) items-center py-2 backdrop-blur-3xl'>
 			<NavigationMenu viewport={isMobile}>
 				<div className='flex items-center'>
 					<h1 className='text-2xl'>Just Watch</h1>
@@ -39,6 +43,12 @@ export default function Navbar() {
 									<Edit />
 									Edit your account
 								</Link>
+							</NavigationMenuLink>
+							<NavigationMenuLink asChild>
+								<button onClick={() => logOut()} className='flex-row w-full items-center gap-2'>
+									<LogOut />
+									Logout
+								</button>
 							</NavigationMenuLink>
 						</NavigationMenuContent>
 					</NavigationMenuItem>
