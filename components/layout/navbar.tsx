@@ -13,7 +13,7 @@ export default function Navbar() {
 		account.logout().then((res) => console.log(res));
 	}
 	return (
-		<header className='bg-background/75 sticky top-0 z-20 flex h-(--navbar-height) items-center py-2 backdrop-blur-3xl'>
+		<header className='bg-primary sticky top-0 left-0 right-0 z-20 flex h-(--navbar-height) items-center py-2 backdrop-blur-3xl'>
 			<NavigationMenu viewport={isMobile}>
 				<div className='flex items-center'>
 					<h1 className='text-2xl'>Just Watch</h1>
@@ -45,7 +45,7 @@ export default function Navbar() {
 								</Link>
 							</NavigationMenuLink>
 							<NavigationMenuLink asChild>
-								<button onClick={() => logOut()} className='flex-row w-full items-center gap-2'>
+								<button onClick={() => logOut()} className='w-full flex-row items-center gap-2'>
 									<LogOut />
 									Logout
 								</button>

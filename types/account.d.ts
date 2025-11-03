@@ -10,4 +10,12 @@ interface SigninType {
 	password: string;
 	role: 'user' | 'admin';
 }
-export { LoginType, SigninType };
+interface AccountType {
+	avatar?: string;
+	banner?: string;
+	first_name: string;
+	last_name: string;
+	username: string;
+	role: 'user' | 'admin';
+}
+export { LoginType, SigninType, AccountType };

@@ -45,7 +45,7 @@ export const metadata: Metadata = {
 };
 export default function Animes() {
 	return (
-		<PageSkeleton data={data} hasSidebar>
+		<PageSkeleton data={data}>
 			<SidebarTrigger />
 			<h1>ANIMES</h1>
 		</PageSkeleton>

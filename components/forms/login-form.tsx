@@ -17,7 +17,9 @@ export default function LoginForm() {
 		},
 	});
 	function onSubmit(values: z.infer<typeof loginSchema>) {
-		account.login(values).then((res) => console.log(res));
+		account.login(values).then((res) => {
+			localStorage.setItem('token', res.data.token);
+		});
 	}
 	return (
 		<Form {...form}>
