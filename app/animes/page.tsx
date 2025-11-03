@@ -1,42 +1,8 @@
 import PageSkeleton from '@/components/layout/page_layout';
-import { LinksType } from '@/components/layout/sidebar';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { baseName } from '@/lib/utils';
-import { Calendar, Home, Inbox, Search, Settings } from 'lucide-react';
+import { sidebar_animes } from '@/miscs/sidebar_datas';
 import { Metadata } from 'next';
-
-const data: LinksType[] = [
-	{
-		title: 'Application',
-		links: [
-			{
-				title: 'Home',
-				url: '#',
-				icon: Home,
-			},
-			{
-				title: 'Inbox',
-				url: '#',
-				icon: Inbox,
-			},
-			{
-				title: 'Calendar',
-				url: '#',
-				icon: Calendar,
-			},
-			{
-				title: 'Search',
-				url: '#',
-				icon: Search,
-			},
-			{
-				title: 'Settings',
-				url: '#',
-				icon: Settings,
-			},
-		],
-	},
-];
 
 export const metadata: Metadata = {
 	title: baseName + ' | ' + 'All Animes',
@@ -45,7 +11,7 @@ export const metadata: Metadata = {
 };
 export default function Animes() {
 	return (
-		<PageSkeleton data={data}>
+		<PageSkeleton data={sidebar_animes}>
 			<SidebarTrigger />
 			<h1>ANIMES</h1>
 		</PageSkeleton>

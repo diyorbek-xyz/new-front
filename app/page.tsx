@@ -1,6 +1,8 @@
+import PageSkeleton from '@components/layout/page_layout';
+
 export default function Home() {
 	return (
-		<section className="container-compact">
+		<PageSkeleton>
 			Lorem, ipsum dolor sit amet consectetur adipisicing elit. Iusto, suscipit corrupti cum aspernatur ipsum nemo ullam ut eius animi nulla quae qui voluptas optio perferendis pariatur maxime earum, ducimus in distinctio quam libero. Cumque, asperiores perspiciatis. Molestias cumque dolore
 			esse odio quidem magnam facere laborum modi porro quaerat deleniti labore, incidunt, nam ad, odit possimus magni aperiam sint aliquam ut excepturi? Quidem, temporibus a voluptates hic nihil error? Suscipit eius ut delectus ex? Ex numquam eaque incidunt expedita facilis iste consequuntur
 			doloremque, aliquid, qui doloribus nihil modi a inventore? Distinctio aliquid nemo laudantium debitis quibusdam necessitatibus quasi sequi tempore hic tempora! Deserunt soluta laborum qui eveniet cupiditate quos at expedita quod porro atque enim, molestias laboriosam. Laudantium,
@@ -55,6 +57,6 @@ export default function Home() {
 			animi laborum delectus blanditiis iure, quisquam, doloribus necessitatibus, eveniet fugit eum! Voluptate sint praesentium eveniet facilis, similique doloremque earum nulla dolorum eius voluptatibus quo tempore quaerat totam libero quibusdam, aut reprehenderit eligendi ut amet distinctio
 			provident eaque? Odit dolores expedita neque? Architecto saepe vel, mollitia pariatur recusandae sapiente. Debitis deleniti eaque ab molestiae ipsa, sint illum explicabo aspernatur laboriosam aliquam nulla, nemo, inventore impedit! Dolorum suscipit cupiditate minus voluptatem
 			consequuntur maxime ipsum aut molestias ex, nulla qui!
-		</section>
+		</PageSkeleton>
 	);
 }
