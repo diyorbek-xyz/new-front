@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import authMiddleware from '@middlewares/auth';
 
-export function proxy(req: NextRequest) {
-	const authResult = authMiddleware(req);
-	if (!authResult.ok) {
-		return NextResponse.redirect(new URL('/login', req.url));
+export async function proxy(req: NextRequest) {
+	const token = req.cookies.get('token')?.value;
+
+	const loginUrl = new URL('/login', req.url);
+
+	if (req.nextUrl.pathname.startsWith('/login') || req.nextUrl.pathname.startsWith('/public')) {
+		return NextResponse.next();
+	}
+	if (!token) {
+		return NextResponse.redirect(loginUrl);
 	}
 	return NextResponse.next();
 }

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export default function authMiddleware(req: NextRequest) {
-	const token = req.cookies.get('token')?.value;
+export default async function authMiddleware(req: NextRequest) {
+	const token = await req.cookies.get('token')?.value;
+	
 	
 	const loginUrl = new URL('/login', req.url);
 

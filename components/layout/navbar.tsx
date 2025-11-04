@@ -11,7 +11,7 @@ import { cn } from '@lib/utils';
 export default function Navbar(props: React.ComponentProps<'div'>) {
 	const isMobile = useIsMobile();
 	function logOut() {
-		account.logout().then((res) => console.log(res));
+		account.logout().then(() => localStorage.removeItem("token"));
 	}
 	return (
 		<header className={cn('bg-background/60 sticky top-0 flex h-(--navbar-height) w-full items-center py-2 backdrop-blur-3xl', props.className)} {...props}>
