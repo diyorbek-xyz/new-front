@@ -1,17 +1,18 @@
-import PageSkeleton from '@components/layout/page_layout';
 import { Metadata } from 'next';
-import { baseName } from '@lib/utils';
-import LoginForm from '@components/forms/login-form';
 
 export const metadata: Metadata = {
-	title: baseName + ' | ' + 'Login',
+	title: 'JustWatch | Login',
 	description: 'Login to use all features',
 };
 
 export default function Login() {
 	return (
-		<PageSkeleton>
-			<LoginForm />
-		</PageSkeleton>
+		<article>
+			<form action='http://localhost:3000/api/users' method='post'>
+				<input type="text" name="username" id="username" placeholder='Enter username' />
+				<input type="text" name="password" id="password" placeholder='Enter password' />
+				<input type="submit" />
+			</form>
+		</article>
 	);
 }
