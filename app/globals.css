@@ -6,26 +6,6 @@
 @utility container-compact {
 	@apply px-[5%] py-2;
 }
-body{
-	background-color: #303030;
-}
-form{
-	display: grid;
-	gap: 10px;
-	padding: 10px;
-}
-input {
-	padding: 10px;
-	outline: none;
-	background-color: white;
-	width: 100%;
-	border: 1px solid #1a1a1a;
-	border-radius: 5px;
-	transition: all ease-out 100ms;
-	&:focus{
-		outline: 3px solid #1a1a1a90;
-	}
-}
 
 @theme inline {
 	--radius-sm: calc(var(--radius) - 4px);
