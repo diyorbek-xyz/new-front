@@ -4,7 +4,7 @@ export default async function Home() {
 	return (
 		<div>
 			<h1>Hello</h1>
-			<Link href='/login'>Login</Link>
+			<Link href='/auth/login'>Login</Link>
 		</div>
 	);
 }

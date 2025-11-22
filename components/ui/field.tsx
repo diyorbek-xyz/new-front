@@ -86,7 +86,7 @@ function FieldSeparator({ children, className, ...props }: React.ComponentProps<
 	);
 }
 
-function FieldError({ className, children, errors, ...props }: React.ComponentProps<'div'> & { errors?: Array<{ message?: string } | undefined> }) {
+function FieldError({ className, children, errors, block = true, ...props }: React.ComponentProps<'div'> & { block?: boolean; errors?: Array<{ message?: string } | undefined> }) {
 	const content = useMemo(() => {
 		if (children) {
 			return children;
@@ -105,13 +105,13 @@ function FieldError({ className, children, errors, ...props }: React.ComponentPr
 		return <ul className='ml-4 flex list-disc flex-col gap-1'>{uniqueErrors.map((error, index) => error?.message && <li key={index}>{error.message}</li>)}</ul>;
 	}, [children, errors]);
 
-	if (!content) {
+	if (!content && block) {
 		return null;
 	}
 
 	return (
-		<div role='alert' data-slot='field-error' className={cn('text-destructive text-sm font-normal', className)} {...props}>
-			{content}
+		<div role='alert' data-slot='field-error' className={cn('text-destructive text-sm font-normal', !block && content ? 'opacity-100' : 'opacity-0', className)} {...props}>
+			{content ?? 'Error'}
 		</div>
 	);
 }

@@ -1,0 +1,16 @@
+.login{
+    min-height: 100vh;
+    background-color: var(--color-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.form{
+    max-width: 800px;
+    min-height: 360px;
+    background-color: var(--color-background);
+    padding: 2rem;
+    border-radius: 30px;
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+}
