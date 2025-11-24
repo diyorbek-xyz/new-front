@@ -1,68 +1,115 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, useForm } from 'react-hook-form';
-import { Button } from '@components/ui/button';
+import { Controller, useForm, UseFormReturn } from 'react-hook-form';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@components/ui/field';
 import { Input } from '@components/ui/input';
 import z from 'zod';
 import Link from 'next/link';
 import Logo from '@components/icon/logo';
-import { Step, StepNextButton, StepProgress, Steps } from '@components/ui/stepper';
+import { useState } from 'react';
+import { Button } from '@components/ui/button';
+import { useRouter } from 'next/navigation';
+import { getBaseUrl } from '@/miscs/getBaseUrl';
+import { Steps, Step, StepActions, StepProgress } from '@components/ui/stepper';
 
-const formSchema = z.object({
-	first_name: z.string({ error: 'Enter your first name' }),
-	last_name: z.string({ error: 'Enter your last name' }),
-	username: z.string({ error: 'Enter username' }).min(4).max(20),
-	password: z.string({ error: 'Enter password' }).min(8).max(20),
+const fullSchema = z.object({
+	firstname: z.string().nonempty('Enter your first name').min(4).max(20),
+	lastname: z.string().nonempty('Enter your last name'),
+	username: z.string().nonempty('Enter username').min(4).max(20),
+	password: z.string().nonempty('Enter password').min(8).max(20),
 });
 
+type FormType = z.infer<typeof fullSchema>;
+
+const stepFields: Record<number, (keyof FormType)[]> = {
+	1: ['firstname', 'lastname'],
+	2: ['username'],
+	3: ['password'],
+};
+
 export default function Signin() {
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
+	const router = useRouter();
+	const [error, setError] = useState<{ message: string }>();
+	const [currentStep, setCurrentStep] = useState<number>(1);
+	const form = useForm<FormType>({
+		resolver: zodResolver(fullSchema),
 		defaultValues: {
-			first_name: '',
-			last_name: '',
+			firstname: '',
+			lastname: '',
 			username: '',
 			password: '',
 		},
+		mode: 'onChange',
 	});
 
-	async function onSubmit(data: z.infer<typeof formSchema>) {
-		await fetch('http://localhost:3000/api/auth/signin', { method: 'POST', body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } }).then((res) => console.log(res));
+	async function onStepChange(value: number, back?: boolean) {
+		if (back) setCurrentStep(Math.min(Math.max(value, 1), 3));
+		const ok = await form.trigger(stepFields[currentStep]);
+		console.log(ok);
+		if (ok) {
+			setCurrentStep(Math.min(Math.max(value, 1), 3));
+		}
+	}
+	async function checkUsername() {
+		if (Number(form.getValues('username')) < 4) return;
+		const res = await fetch('http://localhost:3000/api/auth/check/username', { method: 'POST', body: JSON.stringify({ username: form.getValues('username') }), headers: { 'Content-Type': 'application/json' } });
+		const data = await res.json().then((res) => res);
+		console.log(data);
+
+		if (!data.available) form.setError('username', { message: data.message });
+		return data.available;
+	}
+
+	async function onSubmit(data: FormType) {
+		console.log('SUBMITTED:', data);
+
+		const res = await fetch(`${getBaseUrl()}/api/auth/signin`, {
+			method: 'POST',
+			body: JSON.stringify(data),
+			headers: { 'Content-Type': 'application/json' },
+		}).then((res) => res.json());
+
+		if (res.error) {
+			setError(res);
+		} else {
+			router.push('/');
+			window.location.reload();
+		}
 	}
 
 	return (
 		<main className='bg-secondary flex items-center justify-center sm:min-h-screen'>
-			<section className='bg-background grid h-full w-full gap-10 p-4 sm:min-h-90 sm:max-w-3xl sm:grid-cols-2 sm:rounded-4xl sm:p-8'>
-				<div>
-					<Logo className='mb-5' size={70} />
-					<h2>Login</h2>
-					<p>with your Google Account. This account will be available to other Google apps in the browser.</p>
-				</div>
-				<form className='self-end' id='login' onSubmit={form.handleSubmit(onSubmit)}>
-					<FieldGroup className='gap-5 *:gap-1'>
-						<Steps max={2} current={1}>
-							<StepProgress />
-							<Step step={1}>
+			<section className='bg-background md:max-h-xl grid h-full w-full items-start gap-4 p-4 sm:min-h-80 sm:max-w-3xl sm:grid-cols-2 sm:rounded-4xl sm:p-8 md:min-h-80 md:max-w-3xl lg:min-h-125 lg:max-w-4xl'>
+				<Steps current={currentStep} max={3} onStepChange={(v, b) => onStepChange(v, b)}>
+					<Logo size={70} />
+					<StepProgress />
+					<div className='min-h-90'>
+						<h2>Create new Account</h2>
+						<p>with your Google Account. This account will be available to other Google apps in the browser.</p>
+					</div>
+
+					<form id='signin' onSubmit={form.handleSubmit(onSubmit)} className='h-full min-h-90 self-end *:h-full *:gap-10'>
+						<FieldGroup>
+							<Step step={1} className='grid gap-5'>
 								<Controller
-									name='first_name'
+									name='firstname'
 									control={form.control}
 									render={({ field, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
-											<FieldLabel htmlFor='first_name'>Enter your first name</FieldLabel>
-											<Input {...field} id='first_name' aria-invalid={fieldState.invalid} />
+											<FieldLabel htmlFor='firstname'>Enter your first name</FieldLabel>
+											<Input {...field} aria-invalid={fieldState.invalid} id='firstname' autoComplete='given-name' />
 											<FieldError block={false} errors={[fieldState.error]} />
 										</Field>
 									)}
 								/>
 								<Controller
-									name='last_name'
+									name='lastname'
 									control={form.control}
 									render={({ field, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
-											<FieldLabel htmlFor='last_name'>Enter your last name</FieldLabel>
-											<Input {...field} id='last_name' aria-invalid={fieldState.invalid} />
+											<FieldLabel htmlFor='lastname'>Enter your last name</FieldLabel>
+											<Input {...field} aria-invalid={fieldState.invalid} id='lastname' autoComplete='family-name' />
 											<FieldError block={false} errors={[fieldState.error]} />
 										</Field>
 									)}
@@ -75,32 +122,37 @@ export default function Signin() {
 									render={({ field, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
 											<FieldLabel htmlFor='username'>Enter username</FieldLabel>
-											<Input {...field} id='username' aria-invalid={fieldState.invalid} />
+											<Input {...field} aria-invalid={fieldState.invalid} id='username' />
 											<FieldError block={false} errors={[fieldState.error]} />
 										</Field>
 									)}
 								/>
+							</Step>
+							<Step step={3}>
 								<Controller
 									name='password'
 									control={form.control}
 									render={({ field, fieldState }) => (
 										<Field data-invalid={fieldState.invalid}>
 											<FieldLabel htmlFor='password'>Enter password</FieldLabel>
-											<Input {...field} id='password' aria-invalid={fieldState.invalid} />
+											<Input {...field} aria-invalid={fieldState.invalid} id='password' />
 											<FieldError block={false} errors={[fieldState.error]} />
 										</Field>
 									)}
 								/>
+								<FieldError block={false} errors={[error]} />
 							</Step>
-							<Field className='justify-end gap-5!' orientation='horizontal'>
-								<Link href='/auth/signin'>Create Account</Link>
-								<StepNextButton type='submit' form='login'>
-									Log in
-								</StepNextButton>
-							</Field>
-						</Steps>
-					</FieldGroup>
-				</form>
+							<div className='mt-auto flex items-center justify-between'>
+								<Link href='/auth/login'>Have an account?</Link>
+								<StepActions check={currentStep == 2 && checkUsername} form={form} noError={!error}>
+									<Button type='submit' form='signin'>
+										Sign in
+									</Button>
+								</StepActions>
+							</div>
+						</FieldGroup>
+					</form>
+				</Steps>
 			</section>
 		</main>
 	);

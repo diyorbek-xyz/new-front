@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 		const body = await request.json();
 		console.log(body);
 
-		const account = await AccountModel.findOne({ username: body.username }).select('_id first_name username password');
+		const account = await AccountModel.findOne({ username: body.username }).select('_id firstname username password');
 
 		if (!account) throw new HttpError(404, `User ${body.username} not found`);
 
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 		console.log('END');
 
 		console.log('SIGN');
-		const token = jwt.sign({ id: account._id, first_name: account.first_name, username: account.username }, SECRET);
+		const token = jwt.sign({ id: account._id, firstname: account.firstname, username: account.username }, SECRET);
 		console.log('END');
 
 		console.log('COOKIE');
@@ -37,6 +37,6 @@ export async function POST(request: NextRequest) {
 		console.log('RESPONSE');
 		return NextResponse.json({ message: 'Successfully logged in', data: { token } });
 	} catch (error) {
-		throwError(error);
+		return throwError(error);
 	}
 }

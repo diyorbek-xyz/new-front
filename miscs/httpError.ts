@@ -8,12 +8,11 @@ class HttpError extends Error {
 	}
 }
 function throwError(error: unknown) {
+	console.error(error);
+
 	if (error instanceof HttpError) {
-		console.error(error);
-		return NextResponse.json({ error }, { status: error.status, statusText: error.message });
-	} else {
-		console.error(error);
-		return NextResponse.json({ error: error }, { status: 500 });
+		return NextResponse.json({ message: error.message, error: true }, { status: error.status });
 	}
+	return NextResponse.json({ message: String(error), error: true }, { status: 500 });
 }
 export { HttpError, throwError };

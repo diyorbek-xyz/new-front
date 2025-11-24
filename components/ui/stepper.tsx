@@ -1,15 +1,14 @@
 'use client';
-import React, { createContext, useMemo, useState } from 'react';
+import React, { createContext } from 'react';
 import * as ProgressPrimitive from '@radix-ui/react-progress';
 import { cn } from '@lib/utils';
-import { Button, ButtonProps, buttonVariants } from './button';
-import { VariantProps } from 'class-variance-authority';
-import { Slot } from '@radix-ui/react-slot';
+import { Button } from './button';
+import { UseFormReturn } from 'react-hook-form';
 
 interface StepperContextType {
 	current: number;
 	max: number;
-	setStep: (step: number) => void;
+	setStep: (step: number, back?: boolean) => void;
 }
 const stepperContext = createContext<StepperContextType | null>(null);
 function useStepContext() {
@@ -19,9 +18,8 @@ function useStepContext() {
 	}
 	return context;
 }
-function Steps({ children, current, max }: { children: React.ReactNode; current: number; max: number }) {
-	const [step, setStep] = useState<number>(current);
-	const value = useMemo<StepperContextType>(() => ({ current: step, max: max, setStep: setStep }), [step, max]);
+function Steps({ children, current, max, onStepChange }: { children: React.ReactNode; onStepChange: (value: number, back?: boolean) => void; current: number; max: number }) {
+	const value = { current: current, max: max, setStep: onStepChange };
 	return <stepperContext.Provider value={value}>{children}</stepperContext.Provider>;
 }
 function Step({ step, ...props }: React.ComponentProps<'div'> & { step: number }) {
@@ -32,33 +30,53 @@ function Step({ step, ...props }: React.ComponentProps<'div'> & { step: number }
 }
 
 function StepProgress({ className, ...props }: React.ComponentProps<typeof ProgressPrimitive.Root>) {
-	const { current, max } = useStepContext();
+	const { current, max, setStep } = useStepContext();
 
 	return (
-		<div>
-			<ProgressPrimitive.Root data-slot='progress' className={cn('bg-primary/20 relative my-4 flex h-2 w-full items-center justify-start rounded-full', className)} {...props}>
-				<div className='absolute inset-0 z-2 flex items-center justify-between'>
-					{Array.from({ length: max }).map((e, i) => (
-						<div className={cn('border-secondary bg-background data-[current="true"]:border-primary flex h-10 w-10 items-center justify-center rounded-full border-2 *:m-0!')} data-current={i + 1 == current} key={i}>
-							<h4>{i + 1}</h4>
-						</div>
-					))}
-				</div>
-				<ProgressPrimitive.Indicator data-slot='progress-indicator' className='bg-primary h-full rounded-s-full transition-all' style={{ width: `${(current / max - 1) * 100 || 0}% !important` }} />
-			</ProgressPrimitive.Root>
+		<ProgressPrimitive.Root data-slot='progress' className={cn('bg-primary/20 relative my-3 flex h-2 w-full items-center justify-start rounded-full px-1', className)} {...props}>
+			<div className='absolute inset-0 z-2 flex items-center justify-between'>
+				{Array.from({ length: max }).map((e, i) => (
+					<div
+						onClick={() => setStep(i + 1, i + 1 < current)}
+						className={cn('border-secondary bg-background data-[current="true"]:border-primary flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 *:m-0! data-[complete="true"]:border-green-600')}
+						data-complete={i + 1 < current}
+						data-current={i + 1 == current}
+						key={i}>
+						<h6>{i + 1}</h6>
+					</div>
+				))}
+			</div>
+			<ProgressPrimitive.Indicator data-slot='progress-indicator' className='h-full rounded-s-full bg-green-500 transition-all duration-300' style={{ width: `${(current - 1) * (100 / (max - 1))}%` }} />
+		</ProgressPrimitive.Root>
+	);
+}
+function StepActions({ noError, check, ...props }: React.ComponentProps<'div'> & { noError: boolean; check: any; form: UseFormReturn<{ firstname: string; lastname: string; username: string; password: string }, { firstname: string; lastname: string; username: string; password: string }> }) {
+	const { current, max, setStep } = useStepContext();
+
+	return (
+		<div className='flex items-center justify-between gap-5'>
+			{current != 1 && (
+				<Button type='button' onClick={() => setStep(current - 1, true)}>
+					Back
+				</Button>
+			)}
+			{current != max ? (
+				<Button
+					type='button'
+					disabled={!noError}
+					onClick={async () => {
+						if (check) {
+							if (await check()) setStep(current + 1);
+							return;
+						}
+						setStep(current + 1);
+					}}>
+					{check ? 'Check' : 'Next'}
+				</Button>
+			) : (
+				props.children
+			)}
 		</div>
 	);
 }
-function StepNextButton({ children, onClick, ...props }: ButtonProps) {
-	const { current, max, setStep } = useStepContext();
-	if (current == max) {
-		return (
-			<Button onClick={onClick} {...props}>
-				{children}
-			</Button>
-		);
-	}
-	return <Button type='submit' onClick={() => setStep(current + 1)}>Next</Button>;
-}
-
-export { Steps, Step, StepProgress, StepNextButton };
+export { useStepContext, Steps, Step, StepProgress, StepActions };
