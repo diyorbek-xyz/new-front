@@ -1,4 +1,4 @@
-import { model, models, Schema } from 'mongoose';
+import mongoose, { model, models, Schema } from 'mongoose';
 
 const AccountSchema = new Schema(
 	{
@@ -9,6 +9,7 @@ const AccountSchema = new Schema(
 		role: { type: String, enum: ['user', 'admin', 'creator'], default: 'user' },
 		premium: Boolean,
 		avatar: String,
+		decoration: { type: mongoose.Types.ObjectId, ref: 'decorations' },
 		banner: String,
 	},
 	{ timestamps: true, versionKey: false },

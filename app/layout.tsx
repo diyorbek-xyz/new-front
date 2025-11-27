@@ -3,6 +3,7 @@ import '@/public/assets/fonts/SanFrancisco/index.css';
 import '@/public/assets/styles/static.css';
 import '@/public/assets/styles/typography.css';
 import './globals.css';
+import Navbar from '@components/layout/navbar';
 export const metadata: Metadata = {
 	icons: '/assets/icons/logo.svg',
 	title: 'JustWatch',
@@ -12,7 +13,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 	return (
 		<html lang='en' className='dark'>
-			<body>{children}</body>
+			<body>
+				<Navbar />
+				<main className='*:not-[.profile]:pt-27'>{children}</main>
+			</body>
 		</html>
 	);
 }

@@ -12,10 +12,14 @@ interface SigninType {
 }
 interface AccountType {
 	avatar?: string;
+	avatar_effect?: string;
+	decoration?: { src: string };
 	banner?: string;
-	first_name: string;
-	last_name: string;
+	accent?: string;
+	firstname: string;
+	lastname: string;
 	username: string;
 	role: 'user' | 'admin';
+	[key: string]: any;
 }
-export { LoginType, SigninType, AccountType };
+export type { LoginType, SigninType, AccountType };

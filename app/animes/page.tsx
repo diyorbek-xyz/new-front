@@ -1,3 +1,4 @@
+import Search from '@components/ui/search';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -6,5 +7,13 @@ export const metadata: Metadata = {
 	keywords: ['all', 'animes', 'anime', 'justwatch'],
 };
 export default function Animes() {
-	return <h1>ANIMES</h1>;
+	return (
+		<main className='*:container-compact '>
+			<section>
+				<article>
+					<Search />
+				</article>
+			</section>
+		</main>
+	);
 }
