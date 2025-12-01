@@ -1,6 +1,9 @@
-import { cookies } from "next/headers";
+'use server';
+import { cookies } from 'next/headers';
 
-export const cookieHeader = (await cookies())
-	.getAll()
-	.map((c) => `${c.name}=${c.value}`)
-	.join('; ');
+export const cookieHeader = async () => {
+	return (await cookies())
+		.getAll()
+		.map((c) => `${c.name}=${c.value}`)
+		.join('; ');
+};

@@ -12,7 +12,7 @@ interface SigninType {
 }
 interface AccountType {
 	avatar?: string;
-	avatar_effect?: string;
+	avatar_effect?: { src: string };
 	decoration?: { src: string };
 	banner?: string;
 	accent?: string;

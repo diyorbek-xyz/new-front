@@ -2,20 +2,18 @@
 
 import { ImageCrop, ImageCropApply, ImageCropContent, ImageCropReset } from '@/components/kibo-ui/image-crop';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import base64ToFile from '@/miscs/base64toFile';
 import { XIcon } from 'lucide-react';
-import Image from 'next/image';
-import React, { type ChangeEvent, useState } from 'react';
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from './dialog';
+import React, { useState } from 'react';
 import { UploadDropzone } from '@components/upload-dropzone';
+import { Dialog, DialogProvider, DialogTrigger } from '@components/interactive/dialog';
 
 interface DropboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value'> {
-	onChange: (...event: any[]) => void;
+	id: string;
+	onComplete?: (name: string, file: { data: any; file: File }) => void;
 	aspect?: number;
 	circularCrop?: boolean;
 }
-function Dropbox({ onChange, aspect = 1, circularCrop = false, ...props }: DropboxProps) {
+function Dropbox({ onComplete, aspect = 1, circularCrop = false, ...props }: DropboxProps) {
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 	const [croppedImage, setCroppedImage] = useState<string | null>(null);
 
@@ -31,49 +29,51 @@ function Dropbox({ onChange, aspect = 1, circularCrop = false, ...props }: Dropb
 		setCroppedImage(null);
 	};
 
-	const handleComplete = (image: any) => {
-		setCroppedImage(image);
-		onChange(base64ToFile(image, props.name));
+	const handleComplete = (data: any, file: File) => {
+		setCroppedImage(URL.createObjectURL(file));
+		onComplete?.(props.id, { data, file });
 	};
 
 	return (
-		<Dialog>
+		<DialogProvider>
 			<DialogTrigger asChild>
 				{croppedImage ? (
-					<div className='space-y-4'>
+					<div className='flex items-start justify-between space-y-4'>
 						<Button onClick={handleReset} size='lg' type='button' variant='destructive'>
 							<XIcon /> Reset
 						</Button>
-						<img alt='Cropped' className='w-full object-cover' src={croppedImage} />
+						<img alt='Cropped' className='w-1/2 object-cover' src={croppedImage} />
 					</div>
 				) : (
 					<Button>Change</Button>
 				)}
 			</DialogTrigger>
 			{!croppedImage && (
-				<DialogContent>
-					<DialogTitle>Select {props.name}</DialogTitle>
+				<Dialog rootClassName='backdrop-blur-none' className='grid grid-rows-[auto_1fr] *:size-full md:h-9/12 md:w-5/12'>
+					<h2>Select {props.id}</h2>
 					{!selectedFile ? (
-						<UploadDropzone changeFile={handleFileChange} accept='image/*' />
+						<div>
+							<UploadDropzone name={props.id} id={props.id} changeFile={handleFileChange} accept='image/*' />
+						</div>
 					) : (
 						!croppedImage && (
-							<div>
-								<ImageCrop circularCrop={circularCrop} aspect={aspect} file={selectedFile} maxImageSize={10485760 * 10485760} onCrop={handleComplete}>
-									<ImageCropContent className='max-w-md' />
-									<div className='flex items-center gap-2'>
+							<div className='flex flex-col justify-between'>
+								<ImageCrop circularCrop={circularCrop} aspect={aspect} file={selectedFile} onCrop={handleComplete}>
+									<div className='flex items-center gap-2 self-end'>
 										<ImageCropApply />
 										<ImageCropReset />
 										<Button onClick={handleReset} size='icon' type='button' variant='ghost'>
-											<XIcon className='size-4' />
+											<XIcon className='size-7' />
 										</Button>
 									</div>
+									<ImageCropContent className='max-w-md' />
 								</ImageCrop>
 							</div>
 						)
 					)}
-				</DialogContent>
+				</Dialog>
 			)}
-		</Dialog>
+		</DialogProvider>
 	);
 }
 

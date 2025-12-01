@@ -1,133 +1,72 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, useForm } from 'react-hook-form';
-import * as z from 'zod';
 import { Button } from '@components/ui/button';
-import { Field, FieldError, FieldGroup, FieldLabel } from '@components/ui/field';
-import { Input } from '@components/ui/input';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Dropbox from '@components/ui/dropbox';
+import Input from '@components/interactive/input';
+import { ChangeEvent, useState } from 'react';
+import { fetchAccount } from '@/miscs/fetchData';
 
-const formSchema = z.object({
-	avatar: z.any(),
-	banner: z.any(),
-	avatar_effect: z.string(),
-	decoration: z.string(),
-	firstname: z.string().min(4).max(20),
-	lastname: z.string().min(4).max(20),
-	username: z.string().min(4).max(20),
-	password: z.string().min(8).max(20),
-});
+interface FormProps {
+	firstname?: string;
+	lastname?: string;
+	username?: string;
+	password?: string;
+	avatar?: File;
+	avatarMeta?: any;
+	banner?: File;
+	bannerMeta?: any;
+}
 
 export default function EditProfileForm() {
-	const [error, setError] = useState<{ message: string }>();
-	const router = useRouter();
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
-		defaultValues: {
-			avatar_effect: '',
-			decoration: '',
-			firstname: '',
-			lastname: '',
-			username: '',
-			password: '',
-		},
+	const [Form, setForm] = useState<FormProps>({
+		firstname: '',
+		lastname: '',
+		username: '',
 	});
-
-	async function onSubmit(body: z.infer<typeof formSchema>) {
-		console.log(body);
-
-		// const res = await fetch(`${getBaseUrl()}/api/auth/login`, { method: 'POST', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } });
-		// const data = await res.json();
-
-		// if (data.error) {
-		// 	setError(data);
-		// } else {
-		// 	router.push('/');
-		// 	window.location.reload();
-		// }
+	function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
+		setForm({ ...Form, [e.target.id]: e.target.value });
 	}
-
+	function handleFileComplete(name: string, data: { data: any; file: File }) {
+		console.log({ [name]: data.data, [name + 'Meta']: data.file });
+		setForm({ ...Form, [name]: data.data, [name + 'Meta']: data.file });
+	}
+	async function handleSubmit() {
+		const formData = new FormData();
+		Object.entries(Form).forEach((obj) => formData.append(obj[0], obj[1]));
+		const res = await fetchAccount.put(formData).then((res) => res.data);
+		console.log(res);
+	}
 	return (
-		<form id='login' onSubmit={form.handleSubmit(onSubmit)}>
-			<FieldGroup className='grid grid-cols-2 gap-5 *:gap-1'>
-				<Controller
-					name='firstname'
-					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor='firstname'>Enter first name</FieldLabel>
-							<Input {...field} id='firstname' aria-invalid={fieldState.invalid} />
-							<FieldError block={false} errors={[fieldState.error]} />
-						</Field>
-					)}
-				/>
-				<Controller
-					name='lastname'
-					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor='lastname'>Enter last name</FieldLabel>
-							<Input {...field} id='lastname' aria-invalid={fieldState.invalid} />
-							<FieldError block={false} errors={[fieldState.error]} />
-						</Field>
-					)}
-				/>
-				<Controller
-					name='username'
-					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor='username'>Enter username</FieldLabel>
-							<Input {...field} id='username' aria-invalid={fieldState.invalid} />
-							<FieldError block={false} errors={[fieldState.error]} />
-						</Field>
-					)}
-				/>
-				<Controller
-					name='password'
-					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor='password'>Enter password</FieldLabel>
-							<Input {...field} id='password' aria-invalid={fieldState.invalid} />
-							<FieldError block={false} errors={[fieldState.error]} />
-						</Field>
-					)}
-				/>
-				
-
-				<Controller
-					name='avatar'
-					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor='avatar'>Change avatar</FieldLabel>
-							<Dropbox circularCrop aspect={1} {...field} id='avatar' aria-invalid={fieldState.invalid} />
-							<FieldError block={false} errors={[fieldState.error]} />
-						</Field>
-					)}
-				/>
-				<Controller
-					name='banner'
-					control={form.control}
-					render={({ field, fieldState }) => (
-						<Field data-invalid={fieldState.invalid}>
-							<FieldLabel htmlFor='banner'>Change banner</FieldLabel>
-							<Dropbox aspect={3} {...field} id='banner' aria-invalid={fieldState.invalid} />
-							<FieldError block={false} errors={[fieldState.error]} />
-						</Field>
-					)}
-				/>
-				{error && <FieldError block={false} errors={[error]} />}
-				<Field className='col-span-2 justify-end gap-5!' orientation='horizontal'>
-					<Button type='submit' form='login'>
-						Save changes
-					</Button>
-				</Field>
-			</FieldGroup>
-		</form>
+		<article className='flex flex-col justify-between h-full'>
+			<div className='grid grid-cols-2 gap-5 *:flex *:flex-col *:items-start *:gap-1'>
+				<div>
+					<label htmlFor='firstname'>Change first name</label>
+					<Input id='firstname' onChange={handleInputChange} value={Form.firstname} />
+				</div>
+				<div>
+					<label htmlFor='lastname'>Change last name</label>
+					<Input id='lastname' onChange={handleInputChange} value={Form.lastname} />
+				</div>
+				<div>
+					<label htmlFor='username'>Change username</label>
+					<Input id='username' onChange={handleInputChange} value={Form.username} />
+				</div>
+				<div>
+					<label htmlFor='password'>Change password</label>
+					<Input id='password' onChange={handleInputChange} value={Form.password} />
+				</div>
+				<div>
+					<label htmlFor='avatar'>Change avatar</label>
+					<Dropbox onComplete={handleFileComplete} circularCrop aspect={1} id='avatar' />
+				</div>
+				<div>
+					<label htmlFor='banner'>Change banner</label>
+					<Dropbox onComplete={handleFileComplete} aspect={3} id='banner' />
+				</div>
+			</div>
+			<div className='col-span-2 justify-end gap-5!'>
+				<Button onClick={() => handleSubmit()}>Save changes</Button>
+			</div>
+		</article>
 	);
 }

@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-function ImageWithFallback({ src, fallback, alt, ...props }: React.ComponentProps<'img'> & { fallback?: string }) {
+function ImageWithFallback({ src, fallback = '', alt, ...props }: React.ComponentProps<'img'> & { fallback?: string }) {
 	const [imgSrc, setImgSrc] = React.useState(src);
 
 	React.useEffect(() => {
@@ -15,7 +15,7 @@ function ImageWithFallback({ src, fallback, alt, ...props }: React.ComponentProp
 		img.onload = () => setImgSrc(src);
 		img.onerror = () => setImgSrc(fallback);
 	}, [src, fallback]);
-
-	return <img data-slot='avatar-decoration' alt={alt} {...props} src={imgSrc} />;
+	if (imgSrc == '') return <div {...props}/>;
+	return <img alt={alt} {...props} src={imgSrc} />;
 }
 export default ImageWithFallback;

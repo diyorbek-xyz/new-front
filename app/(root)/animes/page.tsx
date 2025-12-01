@@ -1,4 +1,3 @@
-import Search from '@components/ui/search';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -11,7 +10,6 @@ export default function Animes() {
 		<main className='*:container-compact '>
 			<section>
 				<article>
-					<Search />
 				</article>
 			</section>
 		</main>
