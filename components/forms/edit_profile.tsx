@@ -27,14 +27,12 @@ export default function EditProfileForm() {
 		setForm({ ...Form, [e.target.id]: e.target.value });
 	}
 	function handleFileComplete(name: string, data: { data: any; file: File }) {
-		console.log({ [name]: data.data, [name + 'Meta']: data.file });
 		setForm({ ...Form, [name]: data.data, [name + 'Meta']: data.file });
 	}
 	async function handleSubmit() {
 		const formData = new FormData();
 		Object.entries(Form).forEach((obj) => formData.append(obj[0], obj[1]));
 		const res = await fetchAccount.put(formData).then((res) => res.data);
-		console.log(res);
 	}
 	return (
 		<article className='flex flex-col justify-between h-full'>

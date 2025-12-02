@@ -20,7 +20,6 @@
 			"@lib/*": ["./lib/*"],
 			"@middlewares/*": ["./middlewares/*"],
 			"@services/*": ["./services/*"],
-			"@types/*": ["./types/*"],
 			"@/*": ["./*"]
 		}
 	},

@@ -23,7 +23,9 @@ const buttonVariants = cva(
 				green: 'bg-green text-green-fg',
 				error: 'bg-red-600 text-gray',
 				gray: 'bg-gray text-gray-fg',
+				dark: 'bg-dark text-dark-fg before:bg-white/20',
 				link: 'text-primary underline-offset-4 hover:underline',
+				ghost: 'bg-transparent text-gray! before:bg-gray/20!',
 			},
 			size: {
 				default: 'h-11 px-7 min-w-16 has-[>svg]:px-3',

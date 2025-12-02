@@ -1,12 +1,17 @@
 import ImageWithFallback from '@components/ui/image';
 import { Avatar, AvatarDecoration, AvatarImage } from '@components/ui/avatar';
-import { BookmarkCheckIcon, CakeIcon, Clock, ClockIcon, Edit, EyeIcon, HeartIcon } from 'lucide-react';
+import { BookmarkCheckIcon, ClockIcon, Edit, HeartIcon } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import EditProfileForm from '@components/forms/edit_profile';
 import { Metadata } from 'next';
 import { Popover, PopoverContent, PopoverTrigger } from '@components/ui/popover';
 import { Dialog, DialogProvider, DialogTrigger } from '@components/interactive/dialog';
 import { Tab, TabContent, TabContents, Tabs } from '@components/interactive/tab';
+import { AccountModel } from '@lib/models/account';
+import { cookies } from 'next/headers';
+import { jwtDecode } from 'jwt-decode';
+import { connectToDB } from '@lib/mongodb';
+import { AnimeCard } from '@components/ui/anime-card';
 export const metadata: Metadata = {
 	title: 'Profile',
 	description: 'Check your profile',
@@ -15,6 +20,10 @@ export const metadata: Metadata = {
 
 export default async function Profile() {
 	// const data = (await fetchAccount.get().then((res) => res.data)) as AccountType;
+	const token = (await cookies()).get('token')?.value;
+	const decode: any = await jwtDecode(token!);
+	const db = await connectToDB();
+	const data: any | null = await db.collection('users').findOne({ _id: decode.id });
 
 	return (
 		<section className='profile'>
@@ -29,9 +38,11 @@ export default async function Profile() {
 							</Avatar>
 						</div>
 						<div className='flex w-full flex-col gap-2 md:flex-1 md:py-5'>
-							<h2 className='mb-3!'>Diyorbek Samijonov</h2>
+							<h2 className='mb-3!'>
+								{data?.firstname ?? 'DD'} {data?.lastname ?? 'LL'}
+							</h2>
 							<div className='*:not-[a]:text-gray/60! flex items-center gap-5 *:flex *:items-center *:gap-1 *:text-nowrap'>
-								<a>@diyorbek-xyz</a>
+								<a>@{data?.username??"USS"}</a>
 								<span>16 yosh</span>
 								<span>56 xp</span>
 								<span>100 tomosha</span>
@@ -75,7 +86,11 @@ export default async function Profile() {
 						</Tab>
 					</Tabs>
 					<TabContents>
-						<TabContent tab='history'>HISTORY</TabContent>
+						<TabContent className='grid grid-cols-3 gap-5 py-5' tab='history'>
+							<AnimeCard name='anime' _id='gg' description='Lorem sit amet consectetur adip. Maiores sed consequatur' />
+							<AnimeCard name='anime' _id='gg' description='Lorem sit amet consectetur adip. Maiores sed consequatur' />
+							<AnimeCard name='anime' _id='gg' description='Lorem sit amet consectetur adip. Maiores sed consequatur' />
+						</TabContent>
 						<TabContent tab='saved'>Saved</TabContent>
 						<TabContent tab='liked'>Liked</TabContent>
 					</TabContents>

@@ -74,7 +74,6 @@ export const ImageCrop = ({ file, onCrop, children, ...reactCropProps }: ImageCr
 
 	async function applyCrop() {
 		if (!(imgRef.current && completedCrop)) return;
-		console.log(completedCrop);
 		onCrop?.(completedCrop, file);
 	}
 

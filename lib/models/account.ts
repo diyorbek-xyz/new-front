@@ -14,5 +14,5 @@ const AccountSchema = new Schema(
 	},
 	{ timestamps: true, versionKey: false },
 );
-const AccountModel = models.account || model('account', AccountSchema);
+const AccountModel = models.users || model('users', AccountSchema);
 export { AccountModel };

@@ -15,7 +15,7 @@ function Tab({ tab, className, ...props }: React.ComponentProps<'button'> & { ta
 	const current = useSearchParams().get('tab');
 	return (
 		<Button
-			className={cn('before:bg-gray/10 outline! outline-dark after:bg-green rounded-sm bg-transparent before:inset-x-1.5! after:absolute after:-bottom-0.5 overflow-visible after:opacity-0 after:h-1 after:w-2/3 after:rounded-full data-[current="true"]:after:opacity-100!', className)}
+			className={cn('before:bg-gray/10 outline! outline-dark after:bg-green rounded-sm bg-transparent before:inset-x-1.5! after:absolute after:-bottom-0.75 overflow-visible after:opacity-0 after:h-1 after:w-2/3 after:rounded-full data-[current="true"]:after:opacity-100!', className)}
 			onClick={() => router.push(url.search)}
 			data-current={tab == current}
 			{...props}
@@ -24,7 +24,7 @@ function Tab({ tab, className, ...props }: React.ComponentProps<'button'> & { ta
 }
 
 function TabContents({ className, ...props }: React.ComponentProps<'div'>) {
-	return <div className={cn('bg-dark rounded-b-2xl px-5 py-3', className)} {...props} />;
+	return <div className={cn('bg-dark rounded-b-2xl py-3', className)} {...props} />;
 }
 function TabContent({ tab, ...props }: React.ComponentProps<'div'> & { tab: string }) {
 	const current = useSearchParams().get('tab');
